@@ -21,6 +21,7 @@ app.use(function (req, res, next) {
 
 //mongodb+srv://admin:<password>@cluster0.8taek.mongodb.net/?retryWrites=true&w=majority
 // getting-started.js
+//connects to mongo database
 const mongoose = require('mongoose');
 main().catch(err => console.log(err));
 async function main() {
@@ -28,48 +29,67 @@ async function main() {
   // use `await mongoose.connect('mongodb://user:password@localhost:27017/test');` if your database has auth enabled
 }
 
+//create the schema for the database
 const bookSchema = new mongoose.Schema({
   title: String,
   cover: String,
   author: String
 });
 
+//create a bookModel
 const bookModel = mongoose.model('Booksgdfgdfgdfgsss', bookSchema);
 
-app.post('/api/books',(req,res)=>{
+app.post('/api/books', (req, res) => {
   console.log(req.body);
 
+  //create a book
   bookModel.create({
     title: req.body.title,
-    cover:req.body.cover,
-    author:req.body.author
+    cover: req.body.cover,
+    author: req.body.author
   })
-  
+
+  //data recieved 
   res.send('Data Recieved');
 })
 
+//connects to book page
 app.get('/api/books', (req, res) => {
-  bookModel.find((error, data)=>{
+  bookModel.find((error, data) => {
     res.json(data);
   })
 })
 
-app.get('/api/book/:id', (req, res)=>{
+//load id 
+app.get('/api/book/:id', (req, res) => {
   console.log(req.params.id);
-  bookModel.findById(req.params.id,(error,data)=>{
+  bookModel.findById(req.params.id, (error, data) => {
     res.json(data);
   })
 })
 
-app.put('/api/book/:id', (req, res)=>{
-  console.log("Update: "+req.params.id);
+//find and update id
+app.put('/api/book/:id', (req, res) => {
+  console.log("Update: " + req.params.id);
 
-  bookModel.findByIdAndUpdate(req.params.id, req.body, {new:true},
-    (error,data)=>{
+  bookModel.findByIdAndUpdate(req.params.id, req.body, { new: true },
+    (error, data) => {
       res.send(data);
     })
 })
 
+app.delete('/api/book/:id', (req, res) =>{
+
+console.log("Deleting: "+req.params.id)
+
+bookModel.findByIdAndDelete({_id: req.params.id},(err, data)=>{
+res.send(data);
+
+})
+
+})
+
+//listening port
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
